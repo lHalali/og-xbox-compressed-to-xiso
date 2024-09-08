@@ -10,6 +10,11 @@ Other issue is "Repackinator" repacking abilities are not impressive, extract-xi
 
 To have the best of both worlds this script uses both - Repackinator and extract-xiso, to convert from compressed CCI to XISO that is almost the same size as the CCI image with compressed padding.
 
+## Features
+
+- **Batch Conversion**: Repacks multiple CCI files to XISO from a chosen directory.
+- **Automated Splitting**: Automatically splits large XISO files.
+
 ## Prerequisites
 
 1. **PowerShell**: This script requires PowerShell to run. It was an excuse to try my first PowerShell script and it will be maybe last for a long time. I found out I do not like it as it has some weird convetions. So the script code may annoy some PowerShell purists. :)
@@ -31,15 +36,10 @@ To have the best of both worlds this script uses both - Repackinator and extract
    - Convert each CCI image to a redump-like ISO (without the video partition).
    - Combine ISO parts (if split) into a single image as Repackinator does not have any cli parameters to disable splitting.
    - Repacking the redump-like ISO to XISO with extract-xiso.
-   - Split the resulting XISO if it exceeds a 4 GB (limitation of FATX file system). If the image is split it the files have a part number before .iso extension.
-   - Copy the `default.tbn` and `default.xbe` files from source directory if present to the output directory.
+   - Split the resulting XISO if it exceeds the size of 4 GB (limitation of the FATX file system). Files have a part number before .iso extension if the image is split.
+   - Copy the `default.tbn` and `default.xbe` files from a source directory if present to the output directory.
 
-6. When the conversion is complete, you will find the XISO files in the selected output directory. The script does not remove the source CCI images but will clean all the temporary images (Repackinator's redump-like ISO, any parts after joning, large XISO after spliting)
-
-## Features
-
-- **Batch Conversion**: Repacks multiple CCI files to XISO from a chosen directory.
-- **Automated Merging**: Automatically splits large XISO files.
+6. When the conversion is complete, you will find the XISO files in the selected output directory. The script does not remove the source CCI images but will clean all the temporary images (Repackinator's redump-like ISO, any parts after joining, large XISO after splitting)
 
 ## Additional Notes
 
@@ -68,5 +68,5 @@ Use this script at your own risk. Ensure you have backups of your files before p
 ## Future development
 
 - It might be easy to add CSO to XISO support.
-- I would like to add the posibility to put custom attach.xbe to the output but it requires some hex edit of the xbe file by the script to edit a title. If I tried to copy the [stellar-attach](https://github.com/MakeMHz/stellar-attach/) everything was named STELLARATTACHXBE in the [XBMC4Gamers](https://github.com/Rocky5/XBMC4Gamers)
+- I would like to add the posibility to put custom attach.xbe to the output but it requires some hex edit of the xbe file by the script to edit a title. When I tried to copy the [stellar-attach](https://github.com/MakeMHz/stellar-attach/) everything was named as STELLARATTACHXBE in the [XBMC4Gamers](https://github.com/Rocky5/XBMC4Gamers)
     - currently it just copies a default.xbe from a source folder (I had it created by Repackinator in the past so it has proper title encoded).
