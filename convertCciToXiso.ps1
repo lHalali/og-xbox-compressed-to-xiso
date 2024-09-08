@@ -317,6 +317,20 @@ function Split-Iso {
     Write-Host "The ISO file has been split into $($fileParts.Count) parts."
 }
 
+function Copy-FileToDestination {
+    param (
+        $SourceFile,
+        $DestinationFolder
+    )
+
+    if (Test-Path $SourceFile) {
+        Write-Host "Copying $SourceFile to $DestinationFolder"
+        Copy-Item -Path $SourceFile -Destination $DestinationFolder
+    } else {
+        Write-Host "The file was not found in: $SourceFile"
+    }
+}
+
 function Copy-DefaultTbn {
     param (
         $CciPath,
@@ -327,24 +341,20 @@ function Copy-DefaultTbn {
     $outputDirectory = [System.IO.Path]::GetDirectoryName($XisoPath)
     $defaultTbnPath = Join-Path -Path $sourceDirectory -ChildPath "default.tbn"
 
-    if (Test-Path $defaultTbnPath) {
-        Write-Host "Copying $defaultTbnPath to $outputDirectory"
-        Copy-Item -Path $defaultTbnPath -Destination $outputDirectory
-    } else {
-        Write-Host "The default.tbn was not found in: $defaultTbnPath"
-    }
+    Copy-FileToDestination -SourceFile $defaultTbnPath -DestinationFolder $outputDirectory
 }
 
 function Copy-AttachXbe {
     param (
-        $AttachXbePath,
+        $CciPath,
         $XisoPath
     )
 
+    $sourceDirectory = [System.IO.Path]::GetDirectoryName($CciPath)
     $outputDirectory = [System.IO.Path]::GetDirectoryName($XisoPath)
+    $defaultXbePath = Join-Path -Path $sourceDirectory -ChildPath "default.xbe"
 
-    Write-Host "Copying $AttachXbePath to $outputDirectory"
-    Copy-Item -Path $AttachXbePath -Destination $outputDirectory
+    Copy-FileToDestination -SourceFile $defaultXbePath -DestinationFolder $outputDirectory
 }
 
 
@@ -355,8 +365,6 @@ $ExtractXisoPath = Search-FilePath -FolderToSearch ".\extract-xiso" -FileName "e
 Write-Host "The extract-xiso will be used from: $ExtractXisoPath"
 $RepackinatorPath = Search-FilePath -FolderToSearch ".\repackinator" -FileName "repackinator.exe"
 Write-Host "The repackinator will be used from: $RepackinatorPath"
-$AttachXbePath = Search-FilePath -FolderToSearch ".\attach-xbe" -FileName "default.xbe"
-Write-Host "The attach.xbe will be used from: $AttachXbePath"
 
 Write-Host "Select image paths."
 $CciInputFolderPath = Get-PathFromDialog -Description "Select CCI Source Directory"
@@ -375,7 +383,7 @@ foreach($CciPath in $CciGamePaths) {
     Clear-RepackinatorConvertedIsoFolder -CciPath $CciPath
     Split-Iso -IsoPath $xisoPath
     Copy-DefaultTbn -CciPath $CciPath -XisoPath $xisoPath
-    Copy-AttachXbe -AttachXbePath $AttachXbePath -XisoPath $xisoPath
+    Copy-AttachXbe -CciPath $CciPath -XisoPath $xisoPath
     $count++
 }
 
